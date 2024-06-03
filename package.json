@@ -1,0 +1,67 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "shlink-url-shortner",
+  "title": "Shlink URL Shortner",
+  "description": "",
+  "icon": "extension-icon.png",
+  "author": "kangapi",
+  "categories": [
+    "Productivity"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "create-shorten-url",
+      "title": "Create Short URL",
+      "description": "",
+      "mode": "view"
+    },
+    {
+      "name": "manage-shorten-url",
+      "title": "Manage Short URL",
+      "description": "",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "key": "apiKey",
+      "title": "API Key",
+      "description": "API Key from the URL Shortner service",
+      "type": "password",
+      "name": "apiKey",
+      "required": true,
+      "placeholder": "API Key"
+    },
+    {
+      "key": "apiUrl",
+      "title": "API URL",
+      "description": "API URL from the URL Shortner service",
+      "type": "textfield",
+      "name": "apiUrl",
+      "required": true,
+      "placeholder": "API URL"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.75.2",
+    "@raycast/utils": "^1.15.0",
+    "axios": "^1.7.2",
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.6",
+    "@types/node": "20.8.10",
+    "@types/react": "18.2.27",
+    "eslint": "^8.51.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
