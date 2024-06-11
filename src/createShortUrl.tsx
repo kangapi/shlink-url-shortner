@@ -1,23 +1,10 @@
-import {
-  ActionPanel,
-  Action,
-  Form,
-  showToast,
-  Toast,
-  useNavigation,
-  Clipboard,
-  getPreferenceValues
-} from "@raycast/api";
-import axios from "axios";
+import { ActionPanel, Action, Form, showToast, Toast, useNavigation, Clipboard } from "@raycast/api";
 import { useEffect, useState } from "react";
+import { createShortUrl, fetchUrlByShortCode } from "./apiService";
+import ManageShortUrl from "./manageShortUrl";
 
 export default function Command() {
-
-  const preferences = getPreferenceValues<Preferences>();
-  const apiKey = preferences.apiKey;
-  const apiUrl = preferences.apiUrl;
-
-  const { pop } = useNavigation();
+  const { push } = useNavigation();
   const [longUrl, setLongUrl] = useState<string>("");
   const [customSlug, setCustomSlug] = useState<string>("");
 
@@ -38,20 +25,12 @@ export default function Command() {
 
   const handleSubmit = async (values: { longUrl: string; customSlug?: string }) => {
     try {
-      const url = `${apiUrl}/rest/v3/short-urls`;
-      const headers = {
-        'Content-Type': 'application/json',
-        'X-Api-Key': apiKey
-      };
-      const data = {
-        longUrl: values.longUrl,
-        customSlug: values.customSlug || undefined,
-      };
-      const response = await axios.post(url, data, { headers });
-      const shortUrl = response.data.shortUrl;
+      const shortUrl = await createShortUrl(values.longUrl, values.customSlug);
+      const shortCode = shortUrl.split("/").pop(); // Extract the short code from the short URL
+      await fetchUrlByShortCode(shortCode!);
       await Clipboard.copy(shortUrl);
       await showToast(Toast.Style.Success, "URL Shortened", `Short URL: ${shortUrl} (Copied to clipboard)`);
-      pop(); // Close the form after successful submission
+      push(<ManageShortUrl></ManageShortUrl>); // Navigate to the detail view
     } catch (error) {
       console.error("Error creating short URL:", error);
       await showToast(Toast.Style.Failure, "Error", "Failed to create the short URL");

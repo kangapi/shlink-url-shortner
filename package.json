@@ -11,13 +11,13 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "create-shorten-url",
+      "name": "createShortUrl",
       "title": "Create Short URL",
       "description": "",
       "mode": "view"
     },
     {
-      "name": "manage-shorten-url",
+      "name": "manageShortUrl",
       "title": "Manage Short URL",
       "description": "",
       "mode": "view"
@@ -44,10 +44,15 @@
     }
   ],
   "dependencies": {
+    "@microlink/mql": "^0.13.6",
+    "@microlink/react": "^5.5.18",
     "@raycast/api": "^1.75.2",
     "@raycast/utils": "^1.15.0",
     "axios": "^1.7.2",
-    "date-fns": "^3.6.0"
+    "babel": "^6.23.0",
+    "date-fns": "^3.6.0",
+    "open-graph-scraper": "^6.5.2",
+    "url": "^0.11.3"
   },
   "devDependencies": {
     "@raycast/eslint-config": "^1.0.6",
