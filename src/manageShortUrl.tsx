@@ -56,6 +56,7 @@ export default function Command() {
                   target={<QrCodeDetail shortUrl={url.shortCode} apiURL={getApiConfig().apiUrl} />}
                 />
                 <Action
+
                   title="Delete URL"
                   icon={Icon.Trash}
                   style={Action.Style.Destructive}
