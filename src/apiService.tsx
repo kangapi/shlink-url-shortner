@@ -58,12 +58,13 @@ export async function deleteUrl(shortCode: string): Promise<void> {
   }
 }
 
-export async function createShortUrl(longUrl: string, customSlug?: string): Promise<string> {
+export async function createShortUrl(longUrl: string, customSlug?: string | undefined, tags?: string[]): Promise<string> {
   try {
     const url = `${apiUrl}/rest/v3/short-urls`;
     const data = {
       longUrl,
       customSlug: customSlug || undefined,
+      tags: tags || undefined
     };
     const response = await axios.post(url, data, { headers });
     return response.data.shortUrl;
@@ -80,6 +81,17 @@ export async function fetchUrlByShortCode(shortCode: string): Promise<Url> {
     return response.data;
   } catch (error) {
     console.error("Error fetching URL:", error);
+    throw error;
+  }
+}
+
+export async function getTags(): Promise<string[]> {
+  try {
+    const url = `${apiUrl}/rest/v3/tags`;
+    const response = await axios.get(url, { headers });
+    return response.data.tags.data;
+  } catch (error) {
+    console.error("Error fetching tags:", error);
     throw error;
   }
 }

@@ -1,12 +1,14 @@
 import { ActionPanel, Action, Form, showToast, Toast, useNavigation, Clipboard } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { createShortUrl, fetchUrlByShortCode } from "./apiService";
+import { createShortUrl, fetchUrlByShortCode, getTags } from "./apiService";
 import ManageShortUrl from "./manageShortUrl";
 
 export default function Command() {
   const { push } = useNavigation();
   const [longUrl, setLongUrl] = useState<string>("");
   const [customSlug, setCustomSlug] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchClipboard = async () => {
@@ -23,14 +25,27 @@ export default function Command() {
     fetchClipboard();
   }, []);
 
-  const handleSubmit = async (values: { longUrl: string; customSlug?: string }) => {
+  useEffect(() => {
+    const loadTags = async () => {
+      try {
+        const fetchedTags = await getTags();
+        setAvailableTags(fetchedTags);
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+      }
+    };
+
+    loadTags();
+  }, []);
+
+  const handleSubmit = async (values: { longUrl: string; customSlug?: string; tags: string[] }) => {
     try {
-      const shortUrl = await createShortUrl(values.longUrl, values.customSlug);
+      const shortUrl = await createShortUrl(values.longUrl, values.customSlug, values.tags);
       const shortCode = shortUrl.split("/").pop(); // Extract the short code from the short URL
       await fetchUrlByShortCode(shortCode!);
       await Clipboard.copy(shortUrl);
       await showToast(Toast.Style.Success, "URL Shortened", `Short URL: ${shortUrl} (Copied to clipboard)`);
-      push(<ManageShortUrl></ManageShortUrl>); // Navigate to the detail view
+      push(<ManageShortUrl />);
     } catch (error) {
       console.error("Error creating short URL:", error);
       await showToast(Toast.Style.Failure, "Error", "Failed to create the short URL");
@@ -59,6 +74,11 @@ export default function Command() {
         value={customSlug}
         onChange={setCustomSlug}
       />
+      <Form.TagPicker id="tags" title="Tags" value={tags} onChange={setTags}>
+        {availableTags.map((tag) => (
+          <Form.TagPicker.Item key={tag} value={tag} title={tag} />
+        ))}
+      </Form.TagPicker>
     </Form>
   );
 }
